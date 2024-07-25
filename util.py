@@ -7,13 +7,13 @@ import torch.nn.functional as F
 import numpy as np
 from hyperparams import hyperparams
 
-FIRST_YEAR = 1995
-LAST_YEAR = 2019
+FIRST_YEAR = 1
+LAST_YEAR = 204
 FEATURES = ['pop', 'cpi', 'emp']
-NUM_TRAIN = 15 
-NUM_VAL = 3
-NUM_TEST = 6
-NUM_EDGE_FEATURES = 10
+NUM_TRAIN = 104 
+NUM_VAL = 30
+NUM_TEST = 70
+NUM_EDGE_FEATURES = 4
 EDGE_FEATURES = ['f'+str(i) for i in range(NUM_EDGE_FEATURES)]
 
 def create_data(year):
@@ -33,15 +33,21 @@ def create_data(year):
     # load in edge index
     edges['i_id'] = edges['i'].map(iso_code_to_id)
     edges['j_id'] = edges['j'].map(iso_code_to_id)
-    edge_index = torch.from_numpy(edges[['i_id', 'j_id']].to_numpy(np.long)).t()
+    edge_index = torch.from_numpy(edges[['i_id', 'j_id']].to_numpy(np.int64)).t()
     edge_attr = torch.from_numpy(edges[EDGE_FEATURES].to_numpy(np.float32)) #extract the features from the dataset.
     edge_attr = (edge_attr - edge_attr.mean(axis=0)) / (edge_attr.std(axis=0))
+    if torch.isnan(edge_attr).any():
+        print("edge_attr contains NaN values. Replacing NaN values with 0.")
+        edge_attr[torch.isnan(edge_attr)] = 0
     
     # load in target values
     y_df = pd.read_csv(f'output/Y_{year}.csv')
     y_df['id'] = y_df['iso_code'].map(iso_code_to_id)
-    y = torch.from_numpy(y_df.sort_values('id')[f'{year+1}'].to_numpy(np.float32)).unsqueeze(1)# get labels as tensor
-    y = y.log() # log scale since spread of GDP is large
+    y = torch.from_numpy(y_df.sort_values('id')[f'{year}'].to_numpy(np.float32)).unsqueeze(1)# get labels as tensor
+    y = y / 1000000 # log scale since spread of GDP is large
+    if torch.isnan(y).any():
+      print("y contains NaN values. Replacing NaN values with 0.")
+      y[torch.isnan(y)] = 0
     
     # load in input features
     x_df = pd.read_csv(f'output/X_NODE_{year}.csv')
@@ -49,6 +55,10 @@ def create_data(year):
     features = ['pop', 'cpi', 'emp']
     x = torch.from_numpy(x_df.sort_values('id').loc[:,features].to_numpy(np.float32))
     x = (x - x.mean(axis=0)) / (x.std(axis=0))  # scale and center data
+    if torch.isnan(x).any():
+      print("x contains NaN values. Replacing NaN values with 0.")
+      x[torch.isnan(x)] = 0
+        
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
 
 def evaluate_model(model, data_iter):
