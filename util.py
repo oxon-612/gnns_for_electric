@@ -9,7 +9,7 @@ from hyperparams import hyperparams
 
 FIRST_YEAR = 1
 LAST_YEAR = 204
-FEATURES = ['pop', 'cpi', 'emp']
+FEATURES = ['nightlight', 'device', 'line']
 NUM_TRAIN = 104 
 NUM_VAL = 30
 NUM_TEST = 70
