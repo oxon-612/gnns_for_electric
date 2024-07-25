@@ -52,7 +52,7 @@ def create_data(year):
     # load in input features
     x_df = pd.read_csv(f'ourdata/X_NODE_{year}.csv')
     x_df['id'] = x_df['iso_code'].map(iso_code_to_id)
-    features = ['pop', 'cpi', 'emp']
+    features = ['nightlight', 'device', 'line']
     x = torch.from_numpy(x_df.sort_values('id').loc[:,features].to_numpy(np.float32))
     x = (x - x.mean(axis=0)) / (x.std(axis=0))  # scale and center data
     if torch.isnan(x).any():
