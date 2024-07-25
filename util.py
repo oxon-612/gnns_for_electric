@@ -74,7 +74,7 @@ def get_data():
     '''
 
     data_list = [create_data(year) for year in range(FIRST_YEAR, LAST_YEAR)]
-    random.shuffle(data_list)
+    #random.shuffle(data_list)
     data_train = data_list[:NUM_TRAIN]
     data_val = data_list[NUM_TRAIN:NUM_TRAIN+NUM_VAL+1]
     data_test = data_list[NUM_TRAIN+NUM_VAL:]
