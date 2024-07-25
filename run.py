@@ -4,8 +4,8 @@ import numpy as np
 import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
 from util import *
-from baseline import BaselineGDPModel
-from model import GDPModel
+from baseline import BaselineModel
+from model import WithedgeModel
 from enum import Enum
 from hyperparams import hyperparams
 
@@ -63,11 +63,11 @@ def train(name_prefix, hyperparams):
 
 
 print("Training baseline...")
-model = BaselineGDPModel()
+model = BaselineModel()
 baseline_val_loss = train("baseline", hyperparams)
 
 print("Training model...")
-model = GDPModel() # needs to be double precision
+model = WithedgeModel() # needs to be double precision
 model_val_loss = train("model", hyperparams)
 
 print('Baseline validation MSE:', baseline_val_loss)
