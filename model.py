@@ -8,8 +8,8 @@ from torch_geometric.loader import DataLoader
 from util import *
 
 # Basically the same as the baseline except we pass edge features 
-class GDPModel(torch.nn.Module):
-    def __init__(self, num_features=3, hidden_size=32, target_size=1):
+class WithedgeModel(torch.nn.Module):
+    def __init__(self, num_features=5, hidden_size=32, target_size=1):
         super().__init__()
         self.hidden_size = hidden_size
         self.num_features = num_features
@@ -25,9 +25,9 @@ class GDPModel(torch.nn.Module):
 
         for conv in self.convs[:-1]:
             x = conv(x, edge_index, edge_attr=edge_attr)
-            x = F.relu(x)
+            #x = F.relu(x)
             x = F.dropout(x, training=self.training)
         x = self.convs[-1](x, edge_index, edge_attr=edge_attr)
         x = self.linear(x)
 
-        return F.relu(x) 
+        return (x) 
