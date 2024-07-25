@@ -23,7 +23,7 @@ def create_data(year):
     '''
     
     assert(year in range(FIRST_YEAR, LAST_YEAR + 1))
-    edges = pd.read_csv(f'output/X_EDGE_{year}.csv')
+    edges = pd.read_csv(f'ourdata/X_EDGE_{year}.csv')
 
     # generate map from iso_code to ids of form [0, ..., num_unique_iso_codes - 1]
     iso_codes = set(edges['i'])
@@ -41,7 +41,7 @@ def create_data(year):
         edge_attr[torch.isnan(edge_attr)] = 0
     
     # load in target values
-    y_df = pd.read_csv(f'output/Y_{year}.csv')
+    y_df = pd.read_csv(f'ourdata/Y_{year}.csv')
     y_df['id'] = y_df['iso_code'].map(iso_code_to_id)
     y = torch.from_numpy(y_df.sort_values('id')[f'{year}'].to_numpy(np.float32)).unsqueeze(1)# get labels as tensor
     y = y / 1000000 # log scale since spread of GDP is large
@@ -50,7 +50,7 @@ def create_data(year):
       y[torch.isnan(y)] = 0
     
     # load in input features
-    x_df = pd.read_csv(f'output/X_NODE_{year}.csv')
+    x_df = pd.read_csv(f'ourdata/X_NODE_{year}.csv')
     x_df['id'] = x_df['iso_code'].map(iso_code_to_id)
     features = ['pop', 'cpi', 'emp']
     x = torch.from_numpy(x_df.sort_values('id').loc[:,features].to_numpy(np.float32))
