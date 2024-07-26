@@ -9,7 +9,7 @@ from util import *
 
 # Basically the same as the baseline except we pass edge features 
 class WithedgeModel(torch.nn.Module):
-    def __init__(self, num_features=5, hidden_size=32, target_size=1):
+    def __init__(self, num_features=3, hidden_size=32, target_size=1):
         super().__init__()
         self.hidden_size = hidden_size
         self.num_features = num_features
