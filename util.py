@@ -8,11 +8,11 @@ import numpy as np
 from hyperparams import hyperparams
 
 FIRST_YEAR = 1
-LAST_YEAR = 204
+LAST_YEAR = 180
 FEATURES = ['nightlight', 'device', 'line']
-NUM_TRAIN = 104 
+NUM_TRAIN = 100 
 NUM_VAL = 30
-NUM_TEST = 70
+NUM_TEST = 50
 NUM_EDGE_FEATURES = 4
 EDGE_FEATURES = ['f'+str(i) for i in range(NUM_EDGE_FEATURES)]
 
@@ -35,7 +35,7 @@ def create_data(year):
     edges['j_id'] = edges['j'].map(iso_code_to_id)
     edge_index = torch.from_numpy(edges[['i_id', 'j_id']].to_numpy(np.int64)).t()
     edge_attr = torch.from_numpy(edges[EDGE_FEATURES].to_numpy(np.float32)) #extract the features from the dataset.
-    edge_attr = (edge_attr - edge_attr.mean(axis=0)) / (edge_attr.std(axis=0))
+    #edge_attr = (edge_attr - edge_attr.mean(axis=0)) / (edge_attr.std(axis=0))
     if torch.isnan(edge_attr).any():
         print("edge_attr contains NaN values. Replacing NaN values with 0.")
         edge_attr[torch.isnan(edge_attr)] = 0
