@@ -16,7 +16,7 @@ class BaselineModel(torch.nn.Module):
         self.target_size = target_size
         self.num_layers = num_layers
         self.gru = nn.GRU(self.hidden_size, self.hidden_size, num_layers=self.num_layers, batch_first=True)
-        self.convs = GATConv(self.num_features, self.hidden_size)
+        self.conv = GATConv(self.num_features, self.hidden_size)
         self.linear = nn.Linear(self.hidden_size, self.target_size)
 
     def forward(self, data):
